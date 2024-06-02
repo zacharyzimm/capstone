@@ -1,26 +1,33 @@
 import os
 import requests
+from PIL import Image
+from io import BytesIO
+import cv2
 
-
-class ModelClient:
+class ModelClient():
     """
     Client that talks to the model deployment and returns a response
     """
 
-    def __init__(self):
-        self.google_maps_api_key = os.environ.get("GOOGLE_MAPS_API_KEY")
-        self.bing_maps_api_key = os.environ.get("BING_MAPS_API_KEY")
+    def __init__(self, image_url):
+        self.image_url = image_url
+        self.image = self.download_and_preprocess_image()
 
-    def talk_to_model(self):
+    def download_and_preprocess_image(self):
+        try:
+            response = requests.get(self.image_url)
+            img = None
+            # open image
+            # img = Image.open(BytesIO(response.content))
+            # img = cv2
+            # TODO: image preprocessing goes here
+            return img
+        except Exception as e:
+            raise Exception # TODO: make better exception handling
+
+    def send_image_to_model(self):
         pass
 
-    def process_image(self):
-        image = self.talk_to_model()
-        return image
+    def predict(self):
+        self.send_image_to_model()
 
-    def annotate_image(self):
-
-    def get_response(self):
-        image = self.process_image()
-        annotated_image = self.annotate_image()
-        return annotated_image

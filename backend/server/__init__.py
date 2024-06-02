@@ -1,6 +1,8 @@
 import logging
 import os
 
+from api.core_server import create_core_server
+
 from dotenv import load_dotenv
 
 logging.info("Loading env...")

@@ -19,17 +19,3 @@ root.render(
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
 
-
-const loader = new Loader({
-  apiKey: "YOUR_API_KEY",
-  version: "weekly",
-  ...additionalOptions,
-});
-
-loader.load().then(async () => {
-  const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
-  map = new Map(document.getElementById("map") as HTMLElement, {
-    center: { lat: -34.397, lng: 150.644 },
-    zoom: 8,
-  });
-});

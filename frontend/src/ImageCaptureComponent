@@ -1,0 +1,74 @@
+import React, { useEffect, useState } from 'react';
+
+interface ScreenshotComponentProps {
+  mapRef: React.RefObject<HTMLDivElement>;
+}
+
+const ScreenshotComponent: React.FC<ScreenshotComponentProps> = ({ mapRef }) => {
+  const [staticMapUrl, setStaticMapUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`;
+    script.async = true;
+    document.head.appendChild(script);
+
+    script.addEventListener('load', () => {
+      if (mapRef.current && window.google && window.google.maps) {
+        const map = new window.google.maps.Map(mapRef.current, {
+          center: { lat: -34.397, lng: 150.644 },
+          zoom: 8,
+        });
+
+        map.addListener('idle', () => {
+          const center = map.getCenter()?.toJSON();
+          const zoom = map.getZoom();
+          const size = `${mapRef.current?.clientWidth}x${mapRef.current?.clientHeight}`;
+
+          if (center) {
+            const url = new URL('https://maps.googleapis.com/maps/api/staticmap');
+            url.searchParams.set('key', process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '');
+            url.searchParams.set('center', `${center.lat},${center.lng}`);
+            url.searchParams.set('zoom', zoom?.toString() || '8');
+            url.searchParams.set('size', size);
+            url.searchParams.set('scale', '2'); // Retina display support
+
+            setStaticMapUrl(url.toString());
+          }
+        });
+      }
+    });
+  }, [mapRef]);
+
+  const sendImageToServer = async () => {
+    if (staticMapUrl) {
+      try {
+        const response = await fetch('https://localhost:8000/model-api/predict', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ imageUrl: staticMapUrl }),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Image processing result:', result);
+        } else {
+          console.error('Server error:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error sending image:', error);
+      }
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={sendImageToServer}>Process Map Image</button>
+      {staticMapUrl && <img src={staticMapUrl} alt="Static Map" style={{ width: '100%' }} />}
+    </div>
+  );
+};
+
+export default ScreenshotComponent;
