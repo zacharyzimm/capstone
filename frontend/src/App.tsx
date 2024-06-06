@@ -1,7 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import MapComponent from './MapComponent';
 
 function App() {
   return (
@@ -20,8 +19,16 @@ function App() {
           Learn React
         </a>
       </header>
-      <MapComponent/>
+    <iframe 
+    width="600" 
+    height="450" 
+    style={{ border: 0 }}   
+    loading="lazy" 
+    allowFullScreen 
+    src="https://www.google.com/maps/embed/v1/view?zoom=15&center=34.0442%2C-118.2439&key=AIzaSyAmjKtxOHaWhPsBgkRYb5akhEOh5TMoMCI">
+    </iframe>
     </div>
+
   );
 }
 

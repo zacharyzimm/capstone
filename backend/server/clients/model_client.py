@@ -22,6 +22,9 @@ class ModelClient:
         self.image_url = image_url
         self.image = self.download_and_preprocess_image()
 
+        # use a shared model connection since ModelClient is instantiated for
+        # each API call, thus preventing opening too many unnecessary connections
+
         if ModelClient.model_connection is None:
             ModelClient.model_connection = ModelConnection()
 
